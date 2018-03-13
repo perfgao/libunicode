@@ -5,3 +5,5 @@ all:
 
 clean:
 	@(cd src; ${MAKE} clean)
+
+.PHONY: all clean
