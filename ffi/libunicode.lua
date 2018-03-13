@@ -3,8 +3,7 @@ local ffi = require "ffi"
 local lib = ffi.load("./libunicode.so")
 
 if not lib then
-    print("load failed")
-    return
+    return nil, "load failed"
 end
 
 ffi.cdef[[
@@ -53,12 +52,10 @@ local function unicode_to_utf8(srcstr, opt)
     return ffi.string(dst)
 end
 
+local _M = {
+    _VERSION = '0.01',
+    encode = utf8_to_unicode,
+    decode = unicode_to_utf8,
+}
 
-print(utf8_to_unicode("汉字"))
-print(utf8_to_unicode("بالعربية"))
-print(utf8_to_unicode("русский  текстc"))
-
-print(unicode_to_utf8(utf8_to_unicode("汉字")))
-print(unicode_to_utf8(utf8_to_unicode("بالعربية")))
-print(unicode_to_utf8(utf8_to_unicode("русский  текстc")))
-
+return _M
