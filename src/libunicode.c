@@ -69,6 +69,8 @@ int encode(const char *src, char *dst)
         d += n;
     }
 
+    d[0] = '\0';
+
     return (d - dst);
 }
 
