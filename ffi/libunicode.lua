@@ -1,10 +1,7 @@
 local ffi = require "ffi"
 
-local lib = ffi.load("./libunicode.so")
-
-if not lib then
-    return nil, "load failed"
-end
+local str_gmatch = string.gmatch
+local str_match = string.match
 
 ffi.cdef[[
 int get_encoded_len(const char *src);
@@ -14,7 +11,52 @@ int get_decode_len(const char *src, int opt);
 int decode(const char *src, char *dst);
 ]]
 
+local lib, loaded
+
+local function loadlib()
+    if loaded then
+        return true
+    end
+
+    -- no load
+
+    local libname = "libunicode.so"
+    local so_path, path
+
+    for k in str_gmatch(package.cpath, "[^;]+") do
+        so_path = str_match(k, "(.*/)")
+        if so_path then
+            so_path = so_path .. libname
+
+            local f, err = io.open(so_path)
+            if f then
+                io.close(f)
+                path = so_path
+                break
+            end
+        end
+    end
+
+    if not path then
+        return false
+    end
+
+    lib = ffi.load(path)
+    if not lib then
+        return false
+    end
+
+    loaded = true
+
+    return true
+end
+
+
 local function utf8_to_unicode(srcstr)
+    if loadlib() ~= true then
+        return nil, "cannot load libunicode.so"
+    end
+
     if type(srcstr) ~= 'string' then
         return nil, 'invaild'
     end
@@ -36,6 +78,10 @@ local function utf8_to_unicode(srcstr)
 end
 
 local function unicode_to_utf8(srcstr, opt)
+    if loadlib() ~= true then
+        return nil, "cannot load libunicode.so"
+    end
+
     if type(srcstr) ~= 'string' then
         return nil, "invaild"
     end
@@ -51,6 +97,7 @@ local function unicode_to_utf8(srcstr, opt)
 
     return ffi.string(dst)
 end
+
 
 local _M = {
     _VERSION = '0.01',
