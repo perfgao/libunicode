@@ -6,6 +6,9 @@ all:
 install:
 	(cd src; ${MAKE} install)
 
+test:
+	(cd tests; ${MAKE} test)
+
 clean:
 	@(cd src; ${MAKE} clean)
 
