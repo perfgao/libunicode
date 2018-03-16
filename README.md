@@ -16,7 +16,7 @@ the *libunicode.a* will be copied to the */usr/local/lib/* directory.
 
 Synopsis
 ========
-```
+```c
 #include<stdio.h>
 #include"libunicode.h"
 
